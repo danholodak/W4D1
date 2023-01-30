@@ -7,26 +7,46 @@ class TicTacToeNode
     # debugger
     @board = board
     @next_mover_mark = next_mover_mark
-    @prev_mov_pos = prev_move_pos
-    self.find_empty_spaces
+    @prev_move_pos = prev_move_pos
+    #self.find_empty_spaces
     
   end
+  # def board
+  #   find_empty_spaces
+  #   @board
+  # end
 
-  def find_empty_spaces
-    @empty_spaces = []
-    # debugger
-    board.rows.each_with_index do |row, rdx|
-      row.each_with_index do |el, idx|
-        if board.empty?([rdx,idx])
-          @empty_spaces << [rdx,idx]
-        end
-      end
+
+  # def find_empty_spaces
+  #   @empty_spaces = []
+  #   # debugger
+  #   board.rows.each_with_index do |row, rdx|
+  #     row.each_with_index do |el, idx|
+  #       if board.empty?([rdx,idx])
+  #         @empty_spaces << [rdx,idx]
+  #       end
+  #     end
+  #   end
+
+
+  # end
+
+  def losing_node?(evaluators_mark)
+
+    if @board.over?
+      return false if @board.winner == evaluators_mark
+      return false if @board.winner == nil
+      return true if @board.winner != evaluators_mark
+      
+      
+    elsif evaluators_mark == next_mover_mark #player's turn
+      return true if self.children.all? {|child| child.losing_node?(evaluators_mark) == true} 
+      # return false if board.tied?
+    elsif evaluators_mark != next_mover_mark #opponent's turn
+      return true if self.children.any? {|child| child.losing_node?(evaluators_mark) == true}
     end
-
-
-  end
-
-  def losing_node?(evaluator)
+    return false
+    
   end
 
   def winning_node?(evaluator)
@@ -43,9 +63,17 @@ class TicTacToeNode
       next_mark =:x
     end
 
-    # debugger
-    
-    @empty_spaces.each do |space|
+     #debugger
+     empty_spaces = []
+     # debugger
+     board.rows.each_with_index do |row, rdx|
+       row.each_with_index do |el, idx|
+         if board.empty?([rdx,idx])
+           empty_spaces << [rdx,idx]
+         end
+       end
+     end
+    empty_spaces.each do |space|
       next_board = board.dup
       next_board[space] = self.next_mover_mark
       
@@ -56,5 +84,6 @@ class TicTacToeNode
     return moves
 
   end
+
 
 end
